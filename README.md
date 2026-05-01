@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Team Management Application
 
-## Getting Started
+A full-stack, robust Team and Project Management application built with Next.js, Bootstrap 5, and Supabase.
 
-First, run the development server:
+**Live Demo (Railway):** [https://team-management-production-a896.up.railway.app/](https://team-management-production-a896.up.railway.app/)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Authentication System:** Secure email & password authentication powered by Supabase Auth. Includes automatic redirect handling and an auto-logout safety feature on the login page.
+- **Dashboard Overview:** Get a quick birds-eye view of your total projects, tasks, and completion metrics at a glance.
+- **Project Management:** Create new projects and automatically become the Project Admin.
+- **Task Assignment:** Create tasks within a project and assign them to team members. When a task is assigned to a user, they are automatically added as a member of the project.
+- **Role-Based Access Control (RBAC):** Built-in roles (`ADMIN` and `MEMBER`). Admins have full control over the project and its tasks, while Members can view project details and update the status of tasks assigned to them.
+- **Row Level Security (RLS):** Data privacy is enforced directly at the database level. Users can only see projects they are members of, and tasks assigned to their specific projects or to them directly.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Technology Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Frontend:** [Next.js](https://nextjs.org/) (React 19, App Router)
+- **Styling:** [Bootstrap 5](https://getbootstrap.com/)
+- **Backend & Database:** [Supabase](https://supabase.com/) (PostgreSQL)
+- **Authentication:** Supabase Auth (`@supabase/supabase-js`)
+- **Hosting:** [Railway](https://railway.app/)
 
-## Learn More
+## ⚙️ Local Development Setup
 
-To learn more about Next.js, take a look at the following resources:
+1. **Clone the repository and install dependencies:**
+   ```bash
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Set up Environment Variables:**
+   Create a `.env.local` file in the root directory and add your Supabase project credentials:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. **Database Setup:**
+   Copy the contents of `supabase_schema.sql` and run it in your Supabase project's SQL Editor. This will automatically create all necessary tables, Enums, Functions, Triggers, and Row Level Security (RLS) policies.
 
-## Deploy on Vercel
+4. **Run the Development Server:**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🗄️ Database Schema & Triggers
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The application uses PostgreSQL with the following core tables:
+- `profiles`: Stores extended user data (linked securely to `auth.users`).
+- `projects`: Stores project metadata.
+- `project_members`: Junction table handling Roles (`ADMIN`, `MEMBER`).
+- `tasks`: Stores tasks, statuses (`TODO`, `IN_PROGRESS`, `DONE`), and assignee data.
+
+**Key Database Triggers:**
+- **Auto-Profile Creation:** Whenever a user signs up, a trigger automatically creates a corresponding row in the `profiles` table.
+- **Auto-Project Assignment:** Whenever a task is assigned to a user (or updated to a new user), a trigger automatically adds that user to the `project_members` table so they have full context of the project.
+
+## 🌐 Deployment (Railway)
+
+When deploying this project to Railway (or Vercel), ensure you:
+1. Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` to your deployment environment variables before building. Next.js requires these at build time for static prerendering.
+2. In your Supabase Dashboard, go to **Authentication -> URL Configuration** and add your production URL (e.g., `https://team-management-production-a896.up.railway.app/auth/callback`) to the **Redirect URLs** list to ensure email authentication works securely in production.
