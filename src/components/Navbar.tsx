@@ -30,7 +30,7 @@ export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
-        <Link className="navbar-brand" href="/">TeamSync</Link>
+        <Link className="navbar-brand" href="/">Team Management</Link>
         {user && (
           <>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
